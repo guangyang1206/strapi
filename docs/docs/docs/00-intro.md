@@ -12,7 +12,7 @@ core/
 ├─ content-manager/
 │  ├─ documentation-file.mdx
 ├─ content-type-builder/
-├─ protocol/          # @strapi/protocol — shared contracts & constants (see /protocol)
+├─ contracts/         # @strapi/contracts — shared constants & Zod (see /contracts)
 plugins/
 ├─ documentation/
 ├─ i18n/
@@ -20,4 +20,4 @@ plugins/
 
 This helps keep the documentation organized according to the file structure of the `packages` folder within the monorepo. From there however, is dependant on the documentation written, it will most likely change over time when the documentation grows and develops.
 
-For **where shared constants, Zod schemas, and types should live** (`@strapi/protocol` vs `@strapi/types` vs `@strapi/utils`), see the [Protocol](/protocol) section.
+For **where shared constants, Zod schemas, and types should live** (`@strapi/contracts` vs `@strapi/types` vs `@strapi/utils`), see the [Contracts](/contracts) section.

@@ -5,4 +5,4 @@ export {
   pluginsUids,
   typeKinds,
   VALID_UID_TARGETS,
-} from '@strapi/protocol/content-type-grammar';
+} from '@strapi/contracts/content-type-grammar';

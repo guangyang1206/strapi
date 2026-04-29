@@ -9,7 +9,7 @@ Target branch: `develop` (not `main`). All PRs go to `develop`.
 ## Repository Structure
 
 ```
-packages/core/       # Framework: strapi, admin, database, content-manager, protocol, types, utils…
+packages/core/       # Framework: strapi, admin, database, content-manager, contracts, types, utils…
 packages/plugins/    # Official plugins: users-permissions, i18n, graphql, documentation…
 packages/providers/  # Email + upload provider implementations
 packages/utils/      # Shared tooling: logger, eslint-config, tsconfig, vitest-config
@@ -21,17 +21,17 @@ tests/               # Integration, E2E, and CLI test infrastructure
 
 The following are the most important packages (not exhaustive — run `yarn workspaces list` for the full set):
 
-| Package                            | Description                                                                                                           |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `@strapi/strapi`                   | Main framework entry point (Koa server)                                                                               |
-| `@strapi/admin`                    | React 18 admin dashboard                                                                                              |
-| `@strapi/core`                     | Core business logic                                                                                                   |
-| `@strapi/database`                 | Database abstraction (MySQL, PostgreSQL, MariaDB, SQLite)                                                             |
-| `@strapi/content-manager`          | Content management UI                                                                                                 |
-| `@strapi/types`                    | Shared TypeScript type definitions                                                                                    |
-| `@strapi/protocol`                 | Shared constants, predicates, Zod — normative wire/schema contracts (leaf package; see contributor docs **Protocol**) |
-| `@strapi/permissions`              | RBAC engine                                                                                                           |
-| `@strapi/plugin-users-permissions` | JWT authentication                                                                                                    |
+| Package                            | Description                                                                                                        |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `@strapi/strapi`                   | Main framework entry point (Koa server)                                                                            |
+| `@strapi/admin`                    | React 18 admin dashboard                                                                                           |
+| `@strapi/core`                     | Core business logic                                                                                                |
+| `@strapi/database`                 | Database abstraction (MySQL, PostgreSQL, MariaDB, SQLite)                                                          |
+| `@strapi/content-manager`          | Content management UI                                                                                              |
+| `@strapi/types`                    | Shared TypeScript type definitions                                                                                 |
+| `@strapi/contracts`                | Shared constants, predicates, Zod — normative wire/schema rules (leaf package; see contributor docs **Contracts**) |
+| `@strapi/permissions`              | RBAC engine                                                                                                        |
+| `@strapi/plugin-users-permissions` | JWT authentication                                                                                                 |
 
 ---
 
@@ -44,7 +44,7 @@ The following are the most important packages (not exhaustive — run `yarn work
 - **Content Types** — Defined using a JSON-based notation (not JSON Schema spec). Each content type has a `schema.json` file — see any `packages/core/content-manager/server/src/content-types/` for examples. The database layer auto-generates tables from them. Never write raw migrations for content type changes.
 - **EE / CE split** — Some features are Enterprise Edition only, gated at runtime. See EE toggles in the Testing section below.
 - **`@strapi/types`** — Single source of truth for shared TypeScript types. Import from here; improve these types rather than duplicating locally.
-- **`@strapi/protocol`** — Normative **runtime** contracts for schema/API rules (reserved names, content-type grammar, Zod entry points). **Must not** depend on `@strapi/utils`, `@strapi/core`, or admin. Framework and utils **consume** protocol; put “what Strapi accepts” rules here, not ad hoc duplicates in utils. See [contributor docs: Protocol](https://contributor.strapi.io/protocol) (source: `docs/docs/docs/01-core/protocol/`).
+- **`@strapi/contracts`** — Normative **runtime** contracts for schema/API rules (reserved names, content-type grammar, Zod entry points). **Must not** depend on `@strapi/utils`, `@strapi/core`, or admin. Framework and utils **consume** this package; put “what Strapi accepts” rules here, not ad hoc duplicates in utils. See [contributor docs: Contracts](https://contributor.strapi.io/contracts) (source: `docs/docs/docs/01-core/contracts/`).
 
 ---
 

@@ -1,4 +1,4 @@
-import { DEFAULT_TYPES } from '@strapi/protocol';
+import { DEFAULT_TYPES } from '@strapi/contracts';
 
 import validateAttributeInput from '../utils/validate-attribute-input';
 

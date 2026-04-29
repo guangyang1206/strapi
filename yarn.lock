@@ -8838,10 +8838,10 @@ __metadata:
     "@reduxjs/toolkit": "npm:1.9.7"
     "@sindresorhus/slugify": "npm:1.1.0"
     "@strapi/admin": "npm:5.43.0"
+    "@strapi/contracts": "npm:5.43.0"
     "@strapi/design-system": "npm:2.2.0"
     "@strapi/generators": "npm:5.43.0"
     "@strapi/icons": "npm:2.2.0"
-    "@strapi/protocol": "npm:5.43.0"
     "@strapi/types": "npm:5.43.0"
     "@strapi/utils": "npm:5.43.0"
     "@testing-library/dom": "npm:10.4.1"
@@ -8878,6 +8878,19 @@ __metadata:
     react-dom: ^17.0.0 || ^18.0.0
     react-router-dom: ^6.30.3
     styled-components: ^6.0.0
+  languageName: unknown
+  linkType: soft
+
+"@strapi/contracts@npm:5.43.0, @strapi/contracts@workspace:packages/core/contracts":
+  version: 0.0.0-use.local
+  resolution: "@strapi/contracts@workspace:packages/core/contracts"
+  dependencies:
+    "@types/lodash": "npm:^4.14.191"
+    eslint-config-custom: "npm:5.43.0"
+    lodash: "npm:4.18.1"
+    tsconfig: "npm:5.43.0"
+    typescript: "npm:5.4.5"
+    zod: "npm:3.25.67"
   languageName: unknown
   linkType: soft
 
@@ -9137,7 +9150,7 @@ __metadata:
   resolution: "@strapi/generators@workspace:packages/generators/generators"
   dependencies:
     "@sindresorhus/slugify": "npm:1.1.0"
-    "@strapi/protocol": "npm:5.43.0"
+    "@strapi/contracts": "npm:5.43.0"
     "@strapi/typescript-utils": "npm:5.43.0"
     "@strapi/utils": "npm:5.43.0"
     "@types/fs-extra": "npm:11.0.4"
@@ -9446,19 +9459,6 @@ __metadata:
     react-dom: ^17.0.0 || ^18.0.0
     react-router-dom: ^6.30.3
     styled-components: ^6.0.0
-  languageName: unknown
-  linkType: soft
-
-"@strapi/protocol@npm:5.43.0, @strapi/protocol@workspace:packages/core/protocol":
-  version: 0.0.0-use.local
-  resolution: "@strapi/protocol@workspace:packages/core/protocol"
-  dependencies:
-    "@types/lodash": "npm:^4.14.191"
-    eslint-config-custom: "npm:5.43.0"
-    lodash: "npm:4.18.1"
-    tsconfig: "npm:5.43.0"
-    typescript: "npm:5.4.5"
-    zod: "npm:3.25.67"
   languageName: unknown
   linkType: soft
 

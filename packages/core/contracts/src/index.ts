@@ -1,7 +1,7 @@
 /**
- * @strapi/protocol — semver-stable constants and Zod schemas shared across Strapi and external tooling.
+ * @strapi/contracts — semver-stable constants and Zod schemas shared across Strapi and external tooling.
  *
- * Populated incrementally; see docs/rfcs/protocol-package-and-shared-contracts.md.
+ * Populated incrementally; see docs/rfcs/contracts-package-and-shared-contracts.md.
  */
 export {
   coreUids,
