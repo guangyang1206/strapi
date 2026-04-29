@@ -1,0 +1,83 @@
+{
+  "name": "@strapi/protocol",
+  "version": "5.43.0",
+  "description": "Shared protocol surface for Strapi: constants and Zod schemas consumable outside the framework",
+  "keywords": [
+    "strapi"
+  ],
+  "homepage": "https://strapi.io",
+  "bugs": {
+    "url": "https://github.com/strapi/strapi/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/strapi/strapi.git",
+    "directory": "packages/core/protocol"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "Strapi Solutions SAS",
+    "email": "hi@strapi.io",
+    "url": "https://strapi.io"
+  },
+  "maintainers": [
+    {
+      "name": "Strapi Solutions SAS",
+      "email": "hi@strapi.io",
+      "url": "https://strapi.io"
+    }
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "source": "./src/index.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./zod": {
+      "types": "./dist/zod.d.ts",
+      "source": "./src/zod.ts",
+      "import": "./dist/zod.js",
+      "require": "./dist/zod.js",
+      "default": "./dist/zod.js"
+    },
+    "./reserved-names": {
+      "types": "./dist/reserved-names.d.ts",
+      "source": "./src/reserved-names.ts",
+      "import": "./dist/reserved-names.js",
+      "require": "./dist/reserved-names.js",
+      "default": "./dist/reserved-names.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "run -T run-s clean build:types",
+    "build:types": "run -T tsc -p tsconfig.build.json",
+    "clean": "run -T rimraf ./dist",
+    "lint": "run -T eslint .",
+    "test:ts": "run -T tsc --noEmit",
+    "watch": "run -T tsc -p tsconfig.build.json -w"
+  },
+  "dependencies": {
+    "lodash": "4.18.1",
+    "zod": "3.25.67"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.191",
+    "eslint-config-custom": "5.43.0",
+    "tsconfig": "5.43.0",
+    "typescript": "5.4.5"
+  },
+  "engines": {
+    "node": ">=20.0.0 <=24.x.x",
+    "npm": ">=6.0.0"
+  }
+}
