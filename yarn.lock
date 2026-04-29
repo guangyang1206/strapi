@@ -9137,6 +9137,7 @@ __metadata:
   resolution: "@strapi/generators@workspace:packages/generators/generators"
   dependencies:
     "@sindresorhus/slugify": "npm:1.1.0"
+    "@strapi/protocol": "npm:5.43.0"
     "@strapi/typescript-utils": "npm:5.43.0"
     "@strapi/utils": "npm:5.43.0"
     "@types/fs-extra": "npm:11.0.4"

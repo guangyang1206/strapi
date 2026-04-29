@@ -1,34 +1,19 @@
+import { DEFAULT_TYPES } from '@strapi/protocol';
+
 import validateAttributeInput from '../utils/validate-attribute-input';
+
+/** CLI plop picker: same as CTB scalar/advanced list minus relation (handled elsewhere) and blocks (interactive CLI scope). */
+const PROMPT_ATTRIBUTE_TYPES = DEFAULT_TYPES.filter(
+  (t): t is Exclude<(typeof DEFAULT_TYPES)[number], 'relation' | 'blocks'> =>
+    t !== 'relation' && t !== 'blocks'
+);
 
 interface AttributeAnswer {
   attributeName: string;
-  attributeType: (typeof DEFAULT_TYPES)[number];
+  attributeType: (typeof PROMPT_ATTRIBUTE_TYPES)[number];
   enum?: string;
   multiple?: boolean;
 }
-
-const DEFAULT_TYPES = [
-  // advanced types
-  'media',
-
-  // scalar types
-  'string',
-  'text',
-  'richtext',
-  'json',
-  'enumeration',
-  'password',
-  'email',
-  'integer',
-  'biginteger',
-  'float',
-  'decimal',
-  'date',
-  'time',
-  'datetime',
-  'timestamp',
-  'boolean',
-] as const;
 
 const getAttributesPrompts = async (inquirer: any) => {
   const { addAttributes } = await inquirer.prompt([
@@ -57,8 +42,8 @@ const getAttributesPrompts = async (inquirer: any) => {
         type: 'list',
         name: 'attributeType',
         message: 'What type of attribute',
-        pageSize: DEFAULT_TYPES.length,
-        choices: DEFAULT_TYPES.map((type) => {
+        pageSize: PROMPT_ATTRIBUTE_TYPES.length,
+        choices: PROMPT_ATTRIBUTE_TYPES.map((type) => {
           return { name: type, value: type };
         }),
       },

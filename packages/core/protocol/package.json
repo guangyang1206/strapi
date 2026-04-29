@@ -53,6 +53,13 @@
       "require": "./dist/reserved-names.js",
       "default": "./dist/reserved-names.js"
     },
+    "./content-type-grammar": {
+      "types": "./dist/content-type-grammar.d.ts",
+      "source": "./src/content-type-grammar.ts",
+      "import": "./dist/content-type-grammar.js",
+      "require": "./dist/content-type-grammar.js",
+      "default": "./dist/content-type-grammar.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
