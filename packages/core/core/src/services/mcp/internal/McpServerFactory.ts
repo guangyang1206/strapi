@@ -70,6 +70,7 @@ export const createMcpServerWithRegistries = ({
   const toolRegistry = new McpToolRegistry({
     strapi,
     definitions: definitions.tools,
+    ability,
   });
   const promptRegistry = new McpPromptRegistry({
     strapi,

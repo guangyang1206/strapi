@@ -2,7 +2,7 @@ import { async } from '@strapi/utils';
 import { isEmpty } from 'lodash/fp';
 import type { Core, UID, Modules } from '@strapi/types';
 
-const ACTIONS = {
+export const ACTIONS = {
   read: 'plugin::content-manager.explorer.read',
   create: 'plugin::content-manager.explorer.create',
   update: 'plugin::content-manager.explorer.update',

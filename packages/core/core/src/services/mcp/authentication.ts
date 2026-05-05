@@ -2,7 +2,9 @@ import type { Core, Data } from '@strapi/types';
 import type { Context } from 'koa';
 
 export type McpAdminTokenAbility = {
-  can(action: string, subject?: string): boolean;
+  can(action: string, subject?: unknown, field?: string): boolean;
+  cannot(action: string, subject?: unknown, field?: string): boolean;
+  rulesFor?: (action: string, subject: string) => unknown[];
 };
 
 export type McpAdminTokenAuthResult =

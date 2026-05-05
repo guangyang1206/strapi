@@ -8,6 +8,7 @@ import {
   McpCapabilityRegistryBase,
 } from './internal/McpCapabilityRegistry';
 import { createSafeCapabilityRegistration } from './utils/createSafeCapabilityRegistration';
+import type { McpAdminTokenAbility } from './authentication';
 
 export function makeMcpToolDefinition<
   Name extends string,
@@ -23,7 +24,10 @@ export function makeMcpToolDefinition<
     description: Description;
     inputSchema: InputSchema;
     outputSchema: OutputSchema;
-    createHandler: (strapi: Core.Strapi) => Modules.MCP.McpToolCallback<InputSchema, OutputSchema>;
+    createHandler: (
+      strapi: Core.Strapi,
+      context: Modules.MCP.McpHandlerContext
+    ) => Modules.MCP.McpToolCallback<InputSchema, OutputSchema>;
   } & Access
 ): Modules.MCP.McpToolDefinition<Name, InputSchema, OutputSchema, Title, Description> & Access;
 export function makeMcpToolDefinition<
@@ -39,7 +43,10 @@ export function makeMcpToolDefinition<
     description: Description;
     inputSchema?: undefined;
     outputSchema: OutputSchema;
-    createHandler: (strapi: Core.Strapi) => Modules.MCP.McpToolCallback<undefined, OutputSchema>;
+    createHandler: (
+      strapi: Core.Strapi,
+      context: Modules.MCP.McpHandlerContext
+    ) => Modules.MCP.McpToolCallback<undefined, OutputSchema>;
   } & Access
 ): Modules.MCP.McpToolDefinition<Name, undefined, OutputSchema, Title, Description> & Access;
 export function makeMcpToolDefinition(tool: Modules.MCP.McpToolDefinition) {
@@ -52,23 +59,32 @@ export class McpToolRegistry
 {
   #strapi: Core.Strapi;
 
+  #ability: McpAdminTokenAbility;
+
   constructor(ctx: {
     strapi: Core.Strapi;
     definitions: McpCapabilityDefinitionRegistry<'tool', Modules.MCP.McpToolDefinition>;
+    ability: McpAdminTokenAbility;
   }) {
     super(ctx.definitions);
     this.#strapi = ctx.strapi;
+    this.#ability = ctx.ability;
   }
 
   bind(mcpServer: McpServer) {
     super.register((definition) => {
       const { name, title, description, inputSchema, outputSchema, createHandler } = definition;
 
+      // Bind the session ability into the handler context so handlers can enforce
+      // field-level and entity-level permission checks without touching the global MCP session.
+      const context: Modules.MCP.McpHandlerContext = { userAbility: this.#ability };
+      const createHandlerWithContext = (strapi: Core.Strapi) => createHandler(strapi, context);
+
       return createSafeCapabilityRegistration({
         strapi: this.#strapi,
         capabilityType: 'Tool',
         name,
-        createHandler,
+        createHandler: createHandlerWithContext,
         createFallbackHandler(errorMessage) {
           return async () => ({
             content: [

@@ -21,6 +21,19 @@ export type McpCapabilityAuth = {
   subject?: string;
 };
 
+/**
+ * Per-request context injected into MCP tool handler factories.
+ * Carries the authenticated session's ability so handlers can enforce
+ * field-level and entity-level permission checks identical to HTTP controllers.
+ */
+export type McpHandlerContext = {
+  userAbility: {
+    can(action: string, subject?: unknown, field?: string): boolean;
+    cannot(action: string, subject?: unknown, field?: string): boolean;
+    rulesFor?: (action: string, subject: string) => unknown[];
+  };
+};
+
 export type McpCapabilityAccess =
   | {
       devModeOnly: true;
@@ -75,7 +88,10 @@ export type McpToolDefinition<
   description: Description;
   inputSchema: InputSchema;
   outputSchema: OutputSchema;
-  createHandler: (strapi: Core.Strapi) => McpToolCallback<InputSchema, OutputSchema>;
+  createHandler: (
+    strapi: Core.Strapi,
+    context: McpHandlerContext
+  ) => McpToolCallback<InputSchema, OutputSchema>;
 };
 
 /**
@@ -159,7 +175,10 @@ export interface McpService {
     outputSchema: OutputSchema;
     devModeOnly: true;
     auth?: never;
-    createHandler: (strapi: Core.Strapi) => McpToolCallback<InputSchema, OutputSchema>;
+    createHandler: (
+      strapi: Core.Strapi,
+      context: McpHandlerContext
+    ) => McpToolCallback<InputSchema, OutputSchema>;
   }): void;
   registerTool<
     Name extends string,
@@ -175,7 +194,10 @@ export interface McpService {
     outputSchema: OutputSchema;
     devModeOnly?: never;
     auth: McpCapabilityAuth;
-    createHandler: (strapi: Core.Strapi) => McpToolCallback<InputSchema, OutputSchema>;
+    createHandler: (
+      strapi: Core.Strapi,
+      context: McpHandlerContext
+    ) => McpToolCallback<InputSchema, OutputSchema>;
   }): void;
 
   /**
