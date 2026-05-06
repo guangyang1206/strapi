@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -67,7 +67,7 @@ jobs:
     if: ${{ needs.conditions.outputs.docs == 'true' || needs.conditions.outputs.global == 'true' }}
     strategy:
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -90,7 +90,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -107,7 +107,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
     steps:
       - uses: actions/checkout@v6
         with:
@@ -130,7 +130,7 @@ jobs:
     if: needs.conditions.outputs.global == 'true' || needs.conditions.outputs.backend == 'true' || needs.conditions.outputs.backend == 'true'
     strategy:
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
     steps:
       - uses: actions/checkout@v6
         with:
@@ -159,7 +159,7 @@ jobs:
       YARN_ENABLE_IMMUTABLE_INSTALLS: false
     strategy:
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
     steps:
       - uses: actions/checkout@v6
         with:
@@ -192,7 +192,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -213,7 +213,7 @@ jobs:
     strategy:
       fail-fast: false # remove once tests aren't flaky
       matrix:
-        node: [20]
+        node: [24]
     steps:
       - uses: actions/checkout@v6
         with:
@@ -230,6 +230,7 @@ jobs:
         run: yarn nx affected --target=test:front --nx-ignore-cycles -- --runInBand --coverage
 
       - name: Upload coverage artifacts
+        if: matrix.node == 26 # Only upload from one node version to avoid conflicts
         uses: actions/upload-artifact@v4
         with:
           name: front-coverage-reports
@@ -344,7 +345,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
     steps:
       - uses: actions/checkout@v6
 
@@ -369,7 +370,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
         shard: [1/4, 2/4, 3/4, 4/4]
     services:
       postgres:
@@ -410,7 +411,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
         shard: [1/4, 2/4, 3/4, 4/4]
     services:
       mysql:
@@ -450,7 +451,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
         shard: [1/4, 2/4, 3/4, 4/4]
     steps:
       - uses: actions/checkout@v6
@@ -477,7 +478,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
         shard: [1/5, 2/5, 3/5, 4/5, 5/5]
     services:
       postgres:
@@ -521,7 +522,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
         shard: [1/5, 2/5, 3/5, 4/5, 5/5]
     services:
       mysql:
@@ -564,7 +565,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [20, 22, 24]
+        node: [20, 22, 24, 26]
         shard: [1/4, 2/4, 3/4, 4/4]
     steps:
       - uses: actions/checkout@v6
