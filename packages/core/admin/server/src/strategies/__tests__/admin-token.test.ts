@@ -35,12 +35,12 @@ describe('Admin Token Auth Strategy', () => {
     findOneUser: jest.Mock = jest.fn(() => activeUserWithRoles),
     adminTokensEnabled = true
   ) => {
-    const authenticateAdminToken = jest.fn(async (accessToken: string) => {
+    const authenticateAdminToken = jest.fn(async () => {
       if (global.strapi.features.future.isEnabled('adminTokens') !== true) {
         return { authenticated: false };
       }
 
-      const apiToken = await getByAccessKey(hash(accessToken));
+      const apiToken = await getByAccessKey(hash());
       if (apiToken === null || apiToken === undefined || apiToken.kind !== 'admin') {
         return { authenticated: false };
       }
@@ -79,7 +79,7 @@ describe('Admin Token Auth Strategy', () => {
         };
       }
 
-      const ability = await generateTokenAbility(apiToken.adminPermissions ?? [], user);
+      const ability = await generateTokenAbility();
       return { authenticated: true, credentials: apiToken, user, ability };
     });
 
