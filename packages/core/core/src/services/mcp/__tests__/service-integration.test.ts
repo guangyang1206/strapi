@@ -32,9 +32,6 @@ describe('MCP Service Integration', () => {
           if (key === 'server.mcp.enabled') {
             return true;
           }
-          if (key === 'autoReload') {
-            return true; // Required for isEnabled() to return true
-          }
           if (key === 'server.url') {
             return 'http://localhost:1337';
           }
@@ -122,9 +119,6 @@ describe('MCP Service Integration', () => {
           get: jest.fn((key: string, defaultValue?: any) => {
             if (key === 'server.mcp.enabled') {
               return false;
-            }
-            if (key === 'autoReload') {
-              return false; // Disabled will also require autoReload to be false
             }
             return defaultValue;
           }),
