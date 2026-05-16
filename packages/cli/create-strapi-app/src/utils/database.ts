@@ -104,9 +104,17 @@ export async function getDatabaseInfos(options: Options): Promise<DBConfig> {
   return database;
 }
 
+// better-sqlite3 is only needed at dev/build time (strapi import-fresh + node-gyp).
+// Placing it in dependencies breaks multi-arch Docker builds that run
+// `npm install --omit=dev` under QEMU emulation (ARM64 hosts).
+// MySQL and PostgreSQL drivers are runtime dependencies and stay in dependencies.
 const sqlClientModule = {
   mysql: { mysql2: '3.20.0' },
   postgres: { pg: '8.20.0' },
+  sqlite: {},
+};
+
+const sqlClientDevModule = {
   sqlite: { 'better-sqlite3': '12.8.0' },
 };
 
@@ -114,6 +122,13 @@ export function addDatabaseDependencies(scope: Scope) {
   scope.dependencies = {
     ...scope.dependencies,
     ...sqlClientModule[scope.database.client],
+  };
+
+  // better-sqlite3 is a build/dev dependency only (node-gyp native addon).
+  // Moving it to devDependencies avoids breaking cross-arch Docker builds.
+  scope.devDependencies = {
+    ...scope.devDependencies,
+    ...sqlClientDevModule[scope.database.client],
   };
 }
 
