@@ -131,6 +131,11 @@ const getEnabledPlugins = async ({
         modulePath: convertSystemPathToModulePath(path.relative(runtimeDir, sysPath)),
         path: sysPath,
       };
+    } else if (userPluginConfig.enabled === false) {
+      // When a plugin is explicitly disabled in the user's plugins config,
+      // remove it from the enabled plugins list so it is not loaded or
+      // rendered in the admin panel.
+      delete plugins[userPluginName];
     }
   }
 
