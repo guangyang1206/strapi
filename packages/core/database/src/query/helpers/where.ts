@@ -223,6 +223,29 @@ type Operator =
   | '$endsWithi'
   | '$jsonSupersetOf';
 
+/**
+ * Escape special characters for SQL LIKE patterns.
+ * Percent (%) and underscore (_) must be escaped so they are treated as
+ * literal characters rather than LIKE wildcards.
+ *
+ * Uses backslash (\) as the escape character, which is then passed
+ * to Knex/SQL via a second argument to `where` (not used here -
+ * instead we pre-escaped the value and append/prepend the wildcard chars).
+ *
+ * NOTE: We only escape the user-supplied `value`. The leading/trailing
+ * wildcard characters (`%`) are added *after* escaping and must NOT be
+ * escaped themselves.
+ */
+const escapeLike = (value: string): string => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+  return value
+    .replace(/\/g, '\\\\')  // escape backslash first
+    .replace(/%/g, '\%')
+    .replace(/_/g, '\_');
+};
+
 // TODO: add type casting per operator at some point
 const applyOperator = (qb: Knex.QueryBuilder, column: any, operator: Operator, value: any) => {
   if (Array.isArray(value) && !isOperatorOfType('array', operator)) {
@@ -327,38 +350,38 @@ const applyOperator = (qb: Knex.QueryBuilder, column: any, operator: Operator, v
       break;
     }
     case '$startsWith': {
-      qb.where(column, 'like', `${value}%`);
+      qb.where(column, 'like', `${escapeLike(value)}%`);
       break;
     }
     case '$startsWithi': {
-      qb.whereRaw(`${fieldLowerFn(qb)} LIKE LOWER(?)`, [column, `${value}%`]);
+      qb.whereRaw(`${fieldLowerFn(qb)} LIKE LOWER(?)`, [column, `${escapeLike(value)}%`]);
       break;
     }
     case '$endsWith': {
-      qb.where(column, 'like', `%${value}`);
+      qb.where(column, 'like', `%${escapeLike(value)}`);
       break;
     }
     case '$endsWithi': {
-      qb.whereRaw(`${fieldLowerFn(qb)} LIKE LOWER(?)`, [column, `%${value}`]);
+      qb.whereRaw(`${fieldLowerFn(qb)} LIKE LOWER(?)`, [column, `%${escapeLike(value)}`]);
       break;
     }
     case '$contains': {
-      qb.where(column, 'like', `%${value}%`);
+      qb.where(column, 'like', `%${escapeLike(value)}%`);
       break;
     }
 
     case '$notContains': {
-      qb.whereNot(column, 'like', `%${value}%`);
+      qb.whereNot(column, 'like', `%${escapeLike(value)}%`);
       break;
     }
 
     case '$containsi': {
-      qb.whereRaw(`${fieldLowerFn(qb)} LIKE LOWER(?)`, [column, `%${value}%`]);
+      qb.whereRaw(`${fieldLowerFn(qb)} LIKE LOWER(?)`, [column, `%${escapeLike(value)}%`]);
       break;
     }
 
     case '$notContainsi': {
-      qb.whereRaw(`${fieldLowerFn(qb)} NOT LIKE LOWER(?)`, [column, `%${value}%`]);
+      qb.whereRaw(`${fieldLowerFn(qb)} NOT LIKE LOWER(?)`, [column, `%${escapeLike(value)}%`]);
       break;
     }
 
