@@ -1,4 +1,6 @@
 import * as tsUtils from '@strapi/typescript-utils';
+import glob from 'glob';
+import * as path from 'path';
 import type { CLIContext } from '../cli/types';
 import { checkRequiredDependencies } from './core/dependencies';
 import { getTimer, prettyTime } from './core/timer';
@@ -94,6 +96,47 @@ const build = async ({ logger, cwd, tsconfig, ...options }: BuildOptions) => {
     const buildDuration = timer.end('buildAdmin');
     buildingSpinner.text = `Building admin panel (${prettyTime(buildDuration)})`;
     buildingSpinner.succeed();
+
+    // Clean up local plugin build artifacts to reduce disk usage.
+    // Local plugins' node_modules can bloat the installation (e.g. from ~300MB to ~1.6GB
+    // per plugin) because @strapi/* and other deps are installed independently for each plugin.
+    // After a production build the source tooling is no longer needed.
+    try {
+      const path = await import('path');
+      const fs = await import('fs/promises');
+      const { promisify } = await import('util');
+      const glob = (await import('glob')).default;
+
+      const pluginsDir = path.join(cwd, 'src', 'plugins');
+      const entries = await fs.readdir(pluginsDir, { withFileTypes: true }).catch(() => [] as import('fs').Dirent[]);
+
+      for (const entry of entries) {
+        if (!entry.isDirectory()) continue;
+        const pluginDir = path.join(pluginsDir, entry.name);
+
+        // Remove node_modules (the biggest contributor to disk bloat)
+        const nmDir = path.join(pluginDir, 'node_modules');
+        await fs.rm(nmDir, { recursive: true, force: true });
+
+        // Remove TS source files outside dist/ (keep dist/ for runtime)
+        const tsFiles = await glob('**/*.ts', {
+          cwd: pluginDir,
+          ignore: ['dist/**', 'node_modules/**'],
+          absolute: true,
+        });
+        await Promise.all(tsFiles.map(f => fs.rm(f, { force: true }).catch(() => {})));
+
+        // Remove config files that are only needed at build time
+        for (const f of ['tsconfig.json', '.eslintrc.js', '.eslintrc.cjs', 'prettier.config.js', 'prettier.config.cjs']) {
+          await fs.rm(path.join(pluginDir, f), { force: true }).catch(() => {});
+        }
+      }
+
+      logger.info('Cleaned up local plugin build artifacts to reduce disk usage.');
+    } catch (cleanupErr) {
+      // Non-fatal: log a warning but don't fail the build
+      logger.warn('Could not clean up local plugin artifacts: ' + (cleanupErr as Error).message);
+    }
   } catch (err) {
     buildingSpinner.fail();
     throw err;
