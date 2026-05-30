@@ -12,7 +12,26 @@ const registerAdminPanelRoute = ({ strapi }: { strapi: Core.Strapi }) => {
   }
 
   const serveAdminMiddleware = async (ctx: Context, next: Next) => {
-    await next();
+    // Node 26: url.parse() throws ERR_INVALID_ARG_VALUE when the url
+    // contains '::' (misinterpreted as IPv6 host). This can happen
+    // when ctx.path looks like a content-type ID (e.g. "api::collection.collection").
+    // Use a try/catch on next() to prevent the whole request from 500-ing.
+    try {
+      await next();
+    } catch (err: any) {
+      if (
+        err &&
+        err.code === 'ERR_INVALID_ARG_VALUE' &&
+        err.message &&
+        err.message.includes('url')
+      ) {
+        // Return 400 instead of 500 for this edge-case URL
+        ctx.status = 400;
+        ctx.body = 'Bad Request: malformed URL';
+        return;
+      }
+      throw err;
+    }
 
     if (ctx.method !== 'HEAD' && ctx.method !== 'GET') {
       return;
