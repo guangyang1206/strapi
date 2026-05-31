@@ -179,26 +179,39 @@ export default {
 
     await validateAdminRegistrationInput(input);
 
-    const hasAdmin = await getService('user').exists();
+    // Wrap the admin-exists check and user creation in a transaction to prevent
+    // a race condition where multiple concurrent requests pass the hasAdmin check
+    // before any of them creates the admin user (see #26494).
+    const result = await strapi.db.transaction(async () => {
+      const hasAdmin = await getService('user').exists();
 
-    if (hasAdmin) {
+      if (hasAdmin) {
+        return { alreadyExists: true } as const;
+      }
+
+      const superAdminRole = await getService('role').getSuperAdmin();
+
+      if (!superAdminRole) {
+        throw new ApplicationError(
+          "Cannot register the first admin because the super admin role doesn't exist."
+        );
+      }
+
+      const user = await getService('user').create({
+        ...input,
+        registrationToken: null,
+        isActive: true,
+        roles: [superAdminRole.id],
+      });
+
+      return { alreadyExists: false, user } as const;
+    });
+
+    if (result.alreadyExists) {
       throw new ApplicationError('You cannot register a new super admin');
     }
 
-    const superAdminRole = await getService('role').getSuperAdmin();
-
-    if (!superAdminRole) {
-      throw new ApplicationError(
-        "Cannot register the first admin because the super admin role doesn't exist."
-      );
-    }
-
-    const user = await getService('user').create({
-      ...input,
-      registrationToken: null,
-      isActive: true,
-      roles: superAdminRole ? [superAdminRole.id] : [],
-    });
+    const { user } = result;
 
     strapi.telemetry.send('didCreateFirstAdmin');
 
