@@ -242,7 +242,7 @@ Before submitting an issue you need to make sure:
 - You provide steps to reproduce the issue.
 - You have tried all the following (if relevant), and your issue remains:
   - Make sure you have the right application started.
-  - Make sure the [issue template] is respected.
+  - Make sure the [issue template](https://github.com/strapi/strapi/blob/develop/.github/ISSUE_TEMPLATE/bug_report.md) is respected.
   - Make sure your issue body is readable and [well formatted](https://guides.github.com/features/mastering-markdown).
   - Make sure you've stopped the Strapi server with CTRL+C and restarted it.
   - Make sure your application has a clean `node_modules` directory, meaning:
